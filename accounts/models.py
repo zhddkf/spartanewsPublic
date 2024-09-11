@@ -6,7 +6,7 @@ class User(AbstractUser):
     birth_date = models.DateField()
     gender = models.CharField(max_length=10, null=True, blank=True)
 
-class Mypage(models.Model):
-    nickname = models.CharField(max_length=50)
-    email = models.EmailField()
-    image = models.ImageField(upload_to='images/')
+# class Mypage(models.Model):
+#     nickname = models.CharField(max_length=50)
+#     email = models.EmailField()
+#     image = models.ImageField(upload_to='images/')
