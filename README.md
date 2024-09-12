@@ -88,9 +88,11 @@ python manage.py runserver
 &nbsp;
 
 ## Project Structure
+
 ```
 📦 
 ├─ .gitignore
+├─ ERD.png
 ├─ README.md
 ├─ accounts
 │  ├─ __init__.py
@@ -98,39 +100,35 @@ python manage.py runserver
 │  ├─ apps.py
 │  ├─ migrations
 │  │  ├─ 0001_initial.py
-│  │  ├─ 0002_user_bio_user_birth_date_user_gender_user_nickname_and_more.py
-│  │  ├─ 0003_alter_user_birth_date_alter_user_nickname.py
-│  │  ├─ 0004_profile.py
-│  │  ├─ 0005_delete_profile.py
 │  │  └─ __init__.py
 │  ├─ models.py
 │  ├─ serializers.py
-│  ├─ signals.py
 │  ├─ tests.py
 │  ├─ urls.py
 │  └─ views.py
-├─ manage.py
-├─ products
+├─ articles
 │  ├─ __init__.py
 │  ├─ admin.py
 │  ├─ apps.py
 │  ├─ migrations
 │  │  ├─ 0001_initial.py
+│  │  ├─ 0002_delete_comment.py
+│  │  ├─ 0003_article_author.py
 │  │  └─ __init__.py
 │  ├─ models.py
 │  ├─ serializers.py
 │  ├─ tests.py
 │  ├─ urls.py
 │  └─ views.py
+├─ manage.py
 ├─ requirements.txt
-└─ spartamarket_DRF
+└─ spartanews
    ├─ __init__.py
    ├─ asgi.py
    ├─ settings.py
    ├─ urls.py
    └─ wsgi.py
 ```
-
 
 
 &nbsp;
