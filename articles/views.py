@@ -1,32 +1,42 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from .models import Article
 from .serializers import ArticleSerializer, ArticleDetailSerializer
 
 
-class ArticleListAPIView(APIView):
+class ArticleListAPIView(ListAPIView):
         queryset = Article.objects.all()
         serializer_class = ArticleSerializer
         filter_backends = [SearchFilter]
-        search_fields = ['title', 'content', 'author']
+        search_fields = ['author__username', 'title', 'content']
 
-
-        def get(self, request):
-                articles = Article.objects.all()
-                serializer = ArticleSerializer(articles, many=True)
+        def get(self, request, *args, **kwargs):
+                articles = self.filter_queryset(self.get_queryset())
+                serializer = self.get_serializer(articles, many=True)
+                if not serializer.data:
+                        return Response({"message": "글이 없습니다"}, status=200)
                 return Response(serializer.data)
         
+        def get_permissions(self):
+                if self.request.method == 'POST':
+                        self.permission_classes = [IsAuthenticated]
+                else:
+                        self.permission_classes = [AllowAny]
+                return super().get_permissions()
 
-        @login_required
         def post(self, request):
                 serializer = ArticleSerializer(data=request.data)
                 if serializer.is_valid(raise_exception=True):
-                        serializer.save()
-                return Response(serializer.data, status=201)
+                        serializer.save(author=request.user)
+                        return Response(serializer.data, status=201)
+                else:
+                        return Response(serializer.errors, status=400)
+
 
 
 class ArticleDetailAPIView(APIView):
