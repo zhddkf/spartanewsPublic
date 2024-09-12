@@ -15,7 +15,7 @@
   
 &nbsp;
 
-- **Article Management:** Write, delete, edit and read a product sales post.
+- **Article Management:**
   - Post articles
   - Edit articles
   - Delete articles
@@ -133,4 +133,37 @@ python manage.py runserver
 
 &nbsp;
 &nbsp;
+&nbsp;
 
+## Role & Contribution
+* Backend
+  - User registration 강다영
+  - Login 강다영
+  - Logout 강다영
+  - Withdrawal 강다영
+  - Search articles 강다영
+  - Change the Password 김경민
+  - Subscription to the authors 김경민
+  - User profile(My page) 김경민
+  - 'Like' to articles 김나희
+  - Post comments 김나희
+  - Delete comments 김나희
+  - Recommend comments 김나희
+  - Post articles 조민희
+  - Edit articles 조민희
+  - Delete articles 조민희
+  - Show article list 조민희
+  - Show article 조민희
+
+&nbsp;
+* etc
+  + 전체 개발 일정 및 이슈 관리 - 전 팀원
+  + 발표 - 김경민
+
+&nbsp;
+
+## Developer
+- 강다영
+- 김경민
+- 김나희
+- 조민희
