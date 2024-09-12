@@ -34,3 +34,9 @@ class SubSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['subscribings']
+
+
+# 비밀번호 변경 시리얼라이저
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)

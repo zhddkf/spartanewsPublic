@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model,authenticate
 from django.contrib.auth.models import User
-from .serializers import UserSerializer,PasswordCheckSerializer, SubSerializer
+from .serializers import UserSerializer,PasswordCheckSerializer, SubSerializer, ChangePasswordSerializer
 from rest_framework import generics,mixins
 from rest_framework.generics import ListAPIView
 from django.shortcuts import render, get_object_or_404
@@ -77,3 +77,20 @@ class SubscribeView(APIView):  # 구독 기능
         else:
             user.subscribes.add(me)
             return Response("구독했습니다.", status=status.HTTP_200_OK)
+        
+# password 변경
+class ChangePasswordAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        serializer = ChangePasswordSerializer(data=request.data)
+        print(serializer)  # 디버깅용
+
+        if serializer.is_valid():
+            user = request.user
+            if user.check_password(serializer.data.get('old_password')):
+                user.set_password(serializer.data.get('new_password'))
+                user.save()
+                return Response({'message': '비밀번호를 성공적으로 변경하였습니다.'}, status=200)
+            return Response({'error': '비밀번호가 같습니다 새 비밀번호를 입력해주세요'}, status=400)
+        return Response(serializer.errors, status=400)
