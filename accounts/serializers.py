@@ -22,6 +22,15 @@ class UserSerializer(serializers.ModelSerializer):
 class PasswordCheckSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
 
-class MypageSerializer(serializers.ModelSerializer):
+# SubUsernameSerializer 은 구독중인 username 만 보이기 위한 용도
+# 아래 SubSerializer 는 SubUsernameSerializer 의 정보를 받아 사용
+class SubUsernameSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
+        fields = ['username']
+class SubSerializer(serializers.ModelSerializer):
+    subscribings = SubUsernameSerializer(many=True, read_only=True)  # 구독 중인 사용자들
+
+    class Meta:
+        model = User
+        fields = ['subscribings']
