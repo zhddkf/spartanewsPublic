@@ -7,6 +7,7 @@ class User(AbstractUser):
     birth_date = models.DateField()
     gender = models.CharField(max_length=10, null=True, blank=True)
     subscribings = models.ManyToManyField('self', symmetrical=False, related_name='subscribes')
+    verification_token = models.CharField(max_length=255, blank=True, null=True)
 
     def soft_delete(self):
         self.is_active = False
@@ -18,4 +19,4 @@ class User(AbstractUser):
         return True
 
     def __str__(self):
-        return str(self.content)
+        return str(self.username)

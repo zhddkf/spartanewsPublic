@@ -1,9 +1,9 @@
 from rest_framework import serializers
+from articles.serializers import ArticleSerializer
 from .models import User
 
-class UserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
 
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'password', 'email', 'first_name', 'last_name', 'birth_date', 'gender']
@@ -15,9 +15,6 @@ class UserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("사용 중인 username입니다.")
         return data
 
-    def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
-        return user
 
 class PasswordCheckSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
@@ -28,12 +25,19 @@ class SubUsernameSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username']
+
+#--------------------------------------------------------------------------
+
 class SubSerializer(serializers.ModelSerializer):
     subscribings = SubUsernameSerializer(many=True, read_only=True)  # 구독 중인 사용자들
+    articles= ArticleSerializer(many=True, read_only=True) # 내가 쓴 글 역참조 해서 불러옴
 
     class Meta:
         model = User
-        fields = ['subscribings']
+        fields = ['subscribings', 'articles']
+
+    def get_articles(self, obj):
+        return ArticleSerializer(obj.articles.all(), many=True).data
 
 
 # 비밀번호 변경 시리얼라이저
