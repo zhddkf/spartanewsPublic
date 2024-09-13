@@ -88,8 +88,8 @@ class CommentDetailAPIView(APIView):
                 return Response(data, status=200)
         def post(self, request, pk):
                 comment = self.get_object(pk)
-                like = get_object_or_404(LikeComments, comment=pk, user=request.user.pk)
-                if comment.like_users.filter(pk=pk).exists():
+                if comment.like_users.filter(pk=request.user.pk).exists():
+                        like = get_object_or_404(LikeComments, comment=pk, user=request.user.pk)
                         if like.is_deleted == True:
                                 like.soft_deleted()
                                 data = {"pk": f"{pk} 추천 취소됨"}

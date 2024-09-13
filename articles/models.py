@@ -7,7 +7,7 @@ User = get_user_model()
 
 
 class SoftDelete(models.Model):
-    is_deleted = models.BooleanField(default=False)
+    is_deleted = models.BooleanField(default=True)
 
     def soft_deleted(self):
         self.is_deleted = False

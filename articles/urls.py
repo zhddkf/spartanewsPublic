@@ -21,7 +21,7 @@ urlpatterns = [
         name="comment_detail",
     ),
     path(
-        'comments/<int:pk>/like', 
+        'comments/<int:pk>/like/', 
         CommentDetailAPIView.as_view(),
         name="like_comment"
     )
