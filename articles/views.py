@@ -11,20 +11,29 @@ from .serializers import (
         ArticleDetailSerializer,
         CommentSerializer,
         )
+from .models import Article
+from .serializers import ArticleSerializer, ArticleDetailSerializer
+from rest_framework.pagination import PageNumberPagination
 
+class CustomPagination(PageNumberPagination):
+        page_size = 5
+        page_size_query_param = 'page_size'
+        max_page_size = 100
 
 class ArticleListAPIView(ListAPIView):
         queryset = Article.objects.all().order_by('-created_at') # 오름차순 정렬, 내림차순 '-created'
         serializer_class = ArticleSerializer
         filter_backends = [SearchFilter]
         search_fields = ['author__username', 'title', 'content']
+        pagination_class = CustomPagination
 
-        def get(self, request, *args, **kwargs): # 글 전체 목록
-                articles = self.filter_queryset(self.get_queryset())
-                serializer = self.get_serializer(articles, many=True)
-                if not serializer.data: # 글 검색 기능
-                        return Response({"message": "글이 없습니다"}, status=200)
-                return Response(serializer.data)
+        # def get(self, request, *args, **kwargs): # 글 전체 목록
+        #         articles = self.filter_queryset(self.get_queryset())
+        #         serializer = self.get_serializer(articles, many=True)
+                
+        #         if not serializer.data: # 글 검색 기능
+        #                 return Response({"message": "글이 없습니다"}, status=200)
+        #         return Response(serializer.data)
         
         def get_permissions(self):
                 if self.request.method == 'POST': # 로그인 권한 설정
