@@ -53,7 +53,7 @@ class DeleteAPIView(APIView): # 회원탈퇴
 
 class Mypage(ListAPIView): # 마이 페이지
     permission_classes = [IsAuthenticated]
-    
+
     def get_queryset(self): # 내가 쓴 글 역참조 로직
         return User.objects.none()
 
@@ -85,7 +85,7 @@ class ChangePasswordAPIView(APIView):
 
     def put(self, request):
         serializer = ChangePasswordSerializer(data=request.data)
-        print(serializer)  # 디버깅용
+        # print(serializer)  # 디버깅용
 
         if serializer.is_valid():
             user = request.user
