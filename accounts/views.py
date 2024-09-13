@@ -129,11 +129,8 @@ class PasswordResetRequestView(APIView): # password 재설정
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             token = default_token_generator.make_token(user)
             reset_url = f"{request.scheme}://{request.get_host()}/reset/{uid}/{token}/"
-            # message = render_to_string('password_reset_email.html', {
-            #     'user': user,
-            #     'reset_url': reset_url,
-            # })
-            message = f"안녕하세요 {user.username}님,\n\n비밀번호 재설정을 위해 아래 링크를 클릭하세요:\n{reset_url}\n\n감사합니다."
+            # message = f"안녕하세요 {user.username}님,\n\n비밀번호 재설정을 위해 아래 링크를 클릭하세요:\n{reset_url}\n\n감사합니다."
+            message = f'uid: {uid}  |  token: {token}'
             send_mail(
                 'Password Reset Request',
                 message,
@@ -141,7 +138,7 @@ class PasswordResetRequestView(APIView): # password 재설정
                 [user.email],
                 fail_silently=False,
             )
-        return Response({"message": "해당 이메일을 사용하는 계정이 있는 경우, 비밀번호 초기화 메일을 전송합니다."}, status=status.HTTP_200_OK)
+        return Response({"message": "해당 이메일을 사용하는 계정이 있는 경우, 비밀번호 재설정 메일을 전송합니다."}, status=status.HTTP_200_OK)
     
 
 class PasswordResetConfirmView(APIView):
