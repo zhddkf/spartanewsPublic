@@ -1,4 +1,6 @@
 from rest_framework import serializers
+
+from articles.serializers import ArticleSerializer
 from .models import User
 
 class UserSerializer(serializers.ModelSerializer):
@@ -22,18 +24,26 @@ class UserSerializer(serializers.ModelSerializer):
 class PasswordCheckSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
 
+
 # SubUsernameSerializer 은 구독중인 username 만 보이기 위한 용도
 # 아래 SubSerializer 는 SubUsernameSerializer 의 정보를 받아 사용
 class SubUsernameSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username']
+
+#--------------------------------------------------------------------------
+
 class SubSerializer(serializers.ModelSerializer):
     subscribings = SubUsernameSerializer(many=True, read_only=True)  # 구독 중인 사용자들
+    articles= ArticleSerializer(many=True, read_only=True) # 내가 쓴 글 역참조 해서 불러옴
 
     class Meta:
         model = User
-        fields = ['subscribings']
+        fields = ['subscribings', 'articles']
+
+    def get_articles(self, obj):
+        return ArticleSerializer(obj.articles.all(), many=True).data
 
 
 # 비밀번호 변경 시리얼라이저

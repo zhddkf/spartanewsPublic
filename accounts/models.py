@@ -19,4 +19,4 @@ class User(AbstractUser):
         return True
 
     def __str__(self):
-        return str(self.content)
+        return str(self.username)
