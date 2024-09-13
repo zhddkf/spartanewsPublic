@@ -38,7 +38,6 @@ class ArticleListAPIView(ListAPIView):
                         return Response(serializer.errors, status=400)
 
 
-
 class ArticleDetailAPIView(APIView):
         def get_object(self, pk):
                 return get_object_or_404(Article, pk=pk)

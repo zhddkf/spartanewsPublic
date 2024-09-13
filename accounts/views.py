@@ -3,13 +3,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import IsAuthenticated
 from django.http import HttpResponse
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 from .serializers import UserSerializer,PasswordCheckSerializer, SubSerializer, ChangePasswordSerializer
-from rest_framework import generics,mixins
-from django.shortcuts import render, get_object_or_404
-from rest_framework.permissions import IsAuthenticated
 from .utils import send_verification_email
 import uuid
 
@@ -27,6 +26,7 @@ class SignupAPIView(APIView): # 회원가입
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class VerifyEmailAPIView(APIView):
     def get(self, request, token):
         user = get_object_or_404(User, verification_token=token)
@@ -35,6 +35,7 @@ class VerifyEmailAPIView(APIView):
         user.verification_token = ''
         user.save()
         return HttpResponse('이메일 인증이 완료되었습니다. 이제 로그인할 수 있습니다.')
+
 
 class LogoutAPIView(APIView): # 로그아웃
     def post(self, request):
@@ -80,6 +81,7 @@ class Mypage(ListAPIView): # 마이 페이지
             return Response({'내 정보':serializer.data, '구독중인 사람':sub_serializer.data['subscribings'], '내가 작성한 글':sub_serializer.data['articles'] },status=200)
         return Response({"message": "다시 시도"}, status=400)
     
+
 class SubscribeView(APIView):  # 구독 기능
     permission_classes = [IsAuthenticated]
     def post(self, request, username):
@@ -93,6 +95,7 @@ class SubscribeView(APIView):  # 구독 기능
             user.subscribes.add(me)
             return Response("구독했습니다.", status=status.HTTP_200_OK)
         
+
 # password 변경
 class ChangePasswordAPIView(APIView):
     permission_classes = [IsAuthenticated]

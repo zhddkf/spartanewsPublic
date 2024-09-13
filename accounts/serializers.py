@@ -1,11 +1,9 @@
 from rest_framework import serializers
-
 from articles.serializers import ArticleSerializer
 from .models import User
 
-class UserSerializer(serializers.ModelSerializer):
-    # password = serializers.CharField(write_only=True)
 
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'password', 'email', 'first_name', 'last_name', 'birth_date', 'gender']
@@ -17,13 +15,9 @@ class UserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("사용 중인 username입니다.")
         return data
 
-    # def create(self, validated_data):
-    #     user = User.objects.create_user(**validated_data)
-    #     return user
 
 class PasswordCheckSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
-
 
 # SubUsernameSerializer 은 구독중인 username 만 보이기 위한 용도
 # 아래 SubSerializer 는 SubUsernameSerializer 의 정보를 받아 사용
