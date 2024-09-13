@@ -8,6 +8,13 @@ from django.http import HttpResponse
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
 from .serializers import UserSerializer,PasswordCheckSerializer, SubSerializer, ChangePasswordSerializer
 from .utils import send_verification_email
 import uuid
@@ -21,6 +28,7 @@ class SignupAPIView(APIView): # 회원가입
             user = serializer.save()
             user.set_password(user.password)
             user.verification_token = str(uuid.uuid4())
+            user.is_active = False
             user.save()
             send_verification_email(user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -30,10 +38,11 @@ class SignupAPIView(APIView): # 회원가입
 class VerifyEmailAPIView(APIView):
     def get(self, request, token):
         user = get_object_or_404(User, verification_token=token)
-        # print(user.is_active)
-        user.is_active = True
         user.verification_token = ''
         user.save()
+        if user.verification_token == '':
+            user.is_active = True
+            user.save()
         return HttpResponse('이메일 인증이 완료되었습니다. 이제 로그인할 수 있습니다.')
 
 
@@ -112,3 +121,35 @@ class ChangePasswordAPIView(APIView):
                 return Response({'message': '비밀번호를 성공적으로 변경하였습니다.'}, status=200)
             return Response({'error': '비밀번호가 같습니다 새 비밀번호를 입력해주세요'}, status=400)
         return Response(serializer.errors, status=400)
+
+
+class PasswordResetRequestView(APIView): # password 재설정
+    def post(self, request):
+        email = request.data.get('email')
+        user = User.objects.filter(email=email).first()
+        if user:
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            token = default_token_generator.make_token(user)
+            reset_url = f"{request.scheme}://{request.get_host()}/reset/{uid}/{token}/"
+            # message = f"안녕하세요 {user.username}님,\n\n비밀번호 재설정을 위해 아래 링크를 클릭하세요:\n{reset_url}\n\n감사합니다."
+            message = f'uid: {uid}  |  token: {token}'
+            send_mail(
+                'Password Reset Request',
+                message,
+                'noreply@gmail.com',
+                [user.email],
+                fail_silently=False,
+            )
+        return Response({"message": "해당 이메일을 사용하는 계정이 있는 경우, 비밀번호 재설정 메일을 전송합니다."}, status=status.HTTP_200_OK)
+    
+
+class PasswordResetConfirmView(APIView):
+    def post(self, request, uidb64, token):
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+        if default_token_generator.check_token(user, token):
+            new_password = request.data.get('new_password')
+            user.set_password(new_password)
+            user.save()
+            return Response({"message": "비밀번호가 변경되었습니다."}, status=status.HTTP_200_OK)
+        return Response({"message": "Invalid token or user ID."}, status=status.HTTP_400_BAD_REQUEST)
