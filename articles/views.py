@@ -5,6 +5,12 @@ from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
+from .models import Article, Comment, LikeComments
+from .serializers import (
+        ArticleSerializer, 
+        ArticleDetailSerializer,
+        CommentSerializer,
+        )
 from .models import Article
 from .serializers import ArticleSerializer, ArticleDetailSerializer
 from rest_framework.pagination import PageNumberPagination
@@ -54,17 +60,56 @@ class ArticleDetailAPIView(APIView):
                 serializer = ArticleDetailSerializer(article)
                 return Response(serializer.data)
 
-        @login_required
         def put(self, request, pk): # 글 수정
-                article = self.get_object(pk)
-                serializer = ArticleDetailSerializer(
-                article, data=request.data, partial=True)
-                if serializer.is_valid(raise_exception=True):
-                        serializer.save()
-                return Response(serializer.data)
-
-        @login_required
+                if request.user.is_authenticated: # 로그인 상태일때
+                        article = self.get_object(pk)
+                        serializer = ArticleDetailSerializer(
+                        article, data=request.data, partial=True)
+                        if serializer.is_valid(raise_exception=True):
+                                serializer.save()
+                        return Response(serializer.data)
+                return Response({'로그인 후 이용 가능합니다'}, status=400)
+                
         def delete(self, request, pk): # 글 삭제
-                article = self.get_object(pk)
-                article.delete()
-                return Response(status=204)
+                if request.user.is_authenticated: # 로그인 상태일때
+                        article = self.get_object(pk)
+                        article.delete()
+                        return Response({'글 삭제가 완료되었습니다'},status=204)
+                return Response({'로그인 후 이용 가능합니다'}, status=400)
+
+
+class AddCommentAPIView(APIView):
+        permission_classes = [IsAuthenticated]
+        def post(self, request, pk):
+                article = get_object_or_404(Article, pk=pk)
+                serializer = CommentSerializer(data=request.data)
+                if serializer.is_valid(raise_exception=True):
+                        serializer.save(article=article)
+                        return Response(serializer.data, status=201)
+
+
+class CommentDetailAPIView(APIView):
+        permission_classes = [IsAuthenticated]
+        def get_object(self, pk):
+                return get_object_or_404(Comment, pk=pk)
+        def delete(self, request, pk):
+                comment = self.get_object(pk)
+                comment.delete()
+                data = {"pk": f"{pk} 삭제됨"}
+                return Response(data, status=200)
+        def post(self, request, pk):
+                comment = self.get_object(pk)
+                if comment.like_users.filter(pk=request.user.pk).exists():
+                        like = get_object_or_404(LikeComments, comment=pk, user=request.user.pk)
+                        if like.is_deleted == True:
+                                like.soft_deleted()
+                                data = {"pk": f"{pk} 추천 취소됨"}
+                                return Response(data, status=200)
+                        elif like.is_deleted == False:
+                                like.restore()
+                                data = {"pk": f"{pk} 추천 부활됨"}
+                                return Response(data, status=200)
+                else:
+                        comment.like_users.add(request.user)
+                        data = {"pk": f"{pk} 추천 완료됨"}
+                        return Response(data, status=200)

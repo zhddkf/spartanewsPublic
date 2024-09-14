@@ -28,6 +28,7 @@ class SignupAPIView(APIView): # 회원가입
             user = serializer.save()
             user.set_password(user.password)
             user.verification_token = str(uuid.uuid4())
+            user.is_active = False
             user.save()
             send_verification_email(user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -37,10 +38,11 @@ class SignupAPIView(APIView): # 회원가입
 class VerifyEmailAPIView(APIView):
     def get(self, request, token):
         user = get_object_or_404(User, verification_token=token)
-        # print(user.is_active)
-        user.is_active = True
         user.verification_token = ''
         user.save()
+        if user.verification_token == '':
+            user.is_active = True
+            user.save()
         return HttpResponse('이메일 인증이 완료되었습니다. 이제 로그인할 수 있습니다.')
 
 
