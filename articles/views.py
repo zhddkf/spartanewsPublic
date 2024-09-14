@@ -60,20 +60,22 @@ class ArticleDetailAPIView(APIView):
                 serializer = ArticleDetailSerializer(article)
                 return Response(serializer.data)
 
-        @login_required
         def put(self, request, pk): # 글 수정
-                article = self.get_object(pk)
-                serializer = ArticleDetailSerializer(
-                article, data=request.data, partial=True)
-                if serializer.is_valid(raise_exception=True):
-                        serializer.save()
-                return Response(serializer.data)
-
-        @login_required
+                if request.user.is_authenticated: # 로그인 상태일때
+                        article = self.get_object(pk)
+                        serializer = ArticleDetailSerializer(
+                        article, data=request.data, partial=True)
+                        if serializer.is_valid(raise_exception=True):
+                                serializer.save()
+                        return Response(serializer.data)
+                return Response({'로그인 후 이용 가능합니다'}, status=400)
+                
         def delete(self, request, pk): # 글 삭제
-                article = self.get_object(pk)
-                article.delete()
-                return Response(status=204)
+                if request.user.is_authenticated: # 로그인 상태일때
+                        article = self.get_object(pk)
+                        article.delete()
+                        return Response({'글 삭제가 완료되었습니다'},status=204)
+                return Response({'로그인 후 이용 가능합니다'}, status=400)
 
 
 class AddCommentAPIView(APIView):

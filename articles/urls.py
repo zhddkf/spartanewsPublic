@@ -8,12 +8,10 @@ from .views import (
 
 
 urlpatterns = [
-    path('', ArticleListAPIView.as_view()),
-    path('<int:pk>/', ArticleDetailAPIView.as_view()),
     path("<int:pk>/comments/", AddCommentAPIView.as_view(),name="add_comment"),
     path("comments/<int:pk>/", CommentDetailAPIView.as_view(),name="comment_detail"),
     path('comments/<int:pk>/like/', CommentDetailAPIView.as_view(),name="like_comment"),
-    path('', ArticleListAPIView.as_view(), name='article-list'),
     path('<int:pk>/', ArticleDetailAPIView.as_view(), name='article-detail'),
+    path('', ArticleListAPIView.as_view(), name='article-list'),
 ] 
 
