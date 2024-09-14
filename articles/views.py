@@ -78,25 +78,24 @@ class ArticleDetailAPIView(APIView):
                 return Response({'로그인 후 이용 가능합니다'}, status=400)
 
 
-class AddCommentAPIView(APIView):
+class CommentAPIView(APIView):
         permission_classes = [IsAuthenticated]
+        def get_object(self, pk):
+                return get_object_or_404(Comment, pk=pk)
         def post(self, request, pk):
                 article = get_object_or_404(Article, pk=pk)
                 serializer = CommentSerializer(data=request.data)
                 if serializer.is_valid(raise_exception=True):
                         serializer.save(article=article)
                         return Response(serializer.data, status=201)
-
-
-class CommentDetailAPIView(APIView):
-        permission_classes = [IsAuthenticated]
-        def get_object(self, pk):
-                return get_object_or_404(Comment, pk=pk)
         def delete(self, request, pk):
                 comment = self.get_object(pk)
                 comment.delete()
                 data = {"pk": f"{pk} 삭제됨"}
                 return Response(data, status=200)
+
+
+class CommentLikeAPIView(APIView):
         def post(self, request, pk):
                 comment = self.get_object(pk)
                 if comment.like_users.filter(pk=request.user.pk).exists():
