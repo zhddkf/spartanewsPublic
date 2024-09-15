@@ -130,6 +130,7 @@ class CommentLikeAPIView(APIView):
                 else:
                         comment.like_users.add(request.user)
                         data = {"pk": f"{pk} 댓글 추천 완료됨"}
+
                         return Response(data, status=200)
                 
 
