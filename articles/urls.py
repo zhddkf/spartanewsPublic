@@ -3,7 +3,8 @@ from .views import (
     ArticleListAPIView, 
     ArticleDetailAPIView, 
     AddCommentAPIView,
-    CommentDetailAPIView
+    CommentDetailAPIView,
+    TranslateAPIView
 )
 
 
@@ -13,5 +14,6 @@ urlpatterns = [
     path('comments/<int:pk>/like/', CommentDetailAPIView.as_view(),name="like_comment"),
     path('<int:pk>/', ArticleDetailAPIView.as_view(), name='article-detail'),
     path('', ArticleListAPIView.as_view(), name='article-list'),
+    path('translate/', TranslateAPIView.as_view())
 ] 
 

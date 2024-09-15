@@ -97,12 +97,14 @@ class SubscribeView(APIView):  # 구독 기능
         # 구독 대상 사용자 조회
         user = get_object_or_404(User, username=username)
         me = request.user
-        if me in user.subscribes.all(): # 내가 대상 사용자를 이미 구독하고 있는지 확인
-            user.subscribes.remove(me)
-            return Response("구독취소를 했습니다.", status=status.HTTP_200_OK)
-        else:
-            user.subscribes.add(me)
-            return Response("구독했습니다.", status=status.HTTP_200_OK)
+        if user != me:
+            if me in user.subscribes.all(): # 내가 대상 사용자를 이미 구독하고 있는지 확인
+                user.subscribes.remove(me)
+                return Response("구독취소를 했습니다.", status=status.HTTP_200_OK)
+            else:
+                user.subscribes.add(me)
+                return Response("구독했습니다.", status=status.HTTP_200_OK)
+        return Response({"자기 자신은 구독할수 없습니다"})
         
 
 # password 변경
