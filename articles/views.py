@@ -5,7 +5,7 @@ from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
-from .models import Article, Comment, LikeComments
+from .models import Article, Comment, LikeComments, LikeArticle
 from .serializers import (
         ArticleSerializer, 
         ArticleDetailSerializer,
@@ -76,40 +76,55 @@ class ArticleDetailAPIView(APIView):
                         article.delete()
                         return Response({'글 삭제가 완료되었습니다'},status=204)
                 return Response({'로그인 후 이용 가능합니다'}, status=400)
+        
+        def post(self, request, pk):
+                article = self.get_object(pk)
+                if article.like_users.filter(pk=request.user.pk).exists():
+                        like = get_object_or_404(LikeArticle, article=pk, user=request.user.pk)
+                        if like.is_deleted == True:
+                                like.soft_deleted()
+                                data = {"pk": f"{pk} 글 좋아요 취소"}
+                                return Response(data, status=200)
+                        elif like.is_deleted == False:
+                                like.restore()
+                                data = {"pk": f"{pk} 글 좋아요 부활"}
+                                return Response(data, status=200)
+                else:
+                        article.like_users.add(request.user)
+                        data = {"pk": f"{pk} 글 좋아요 완료"}
+                        return Response(data, status=200)
 
-
-class AddCommentAPIView(APIView):
+class CommentAPIView(APIView):
         permission_classes = [IsAuthenticated]
+        def get_object(self, pk):
+                return get_object_or_404(Comment, pk=pk)
         def post(self, request, pk):
                 article = get_object_or_404(Article, pk=pk)
                 serializer = CommentSerializer(data=request.data)
                 if serializer.is_valid(raise_exception=True):
                         serializer.save(article=article)
                         return Response(serializer.data, status=201)
-
-
-class CommentDetailAPIView(APIView):
-        permission_classes = [IsAuthenticated]
-        def get_object(self, pk):
-                return get_object_or_404(Comment, pk=pk)
         def delete(self, request, pk):
                 comment = self.get_object(pk)
                 comment.delete()
                 data = {"pk": f"{pk} 삭제됨"}
                 return Response(data, status=200)
+
+
+class CommentLikeAPIView(APIView):
         def post(self, request, pk):
                 comment = self.get_object(pk)
                 if comment.like_users.filter(pk=request.user.pk).exists():
                         like = get_object_or_404(LikeComments, comment=pk, user=request.user.pk)
                         if like.is_deleted == True:
                                 like.soft_deleted()
-                                data = {"pk": f"{pk} 추천 취소됨"}
+                                data = {"pk": f"{pk} 댓글 추천 취소됨"}
                                 return Response(data, status=200)
                         elif like.is_deleted == False:
                                 like.restore()
-                                data = {"pk": f"{pk} 추천 부활됨"}
+                                data = {"pk": f"{pk} 댓글 추천 부활됨"}
                                 return Response(data, status=200)
                 else:
                         comment.like_users.add(request.user)
-                        data = {"pk": f"{pk} 추천 완료됨"}
+                        data = {"pk": f"{pk} 댓글 추천 완료됨"}
                         return Response(data, status=200)

@@ -9,7 +9,7 @@ llm = ChatOpenAI(model="gpt-4o-mini")
 # HumanMessage 는 대화에서 인간 측의 메세지
 messages = [
     SystemMessage(content="다음을 영어에서 한국어로 번역하세요."),
-    HumanMessage(content="you genius"),
+    HumanMessage(content="I'm happy"),
 ]
 
 # LLM 에 message 를 invoke 하면 결과를 받아볼 수 있다.
