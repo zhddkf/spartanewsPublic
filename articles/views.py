@@ -16,6 +16,7 @@ from .serializers import ArticleSerializer, ArticleDetailSerializer
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 from rest_framework.pagination import PageNumberPagination
+from django.conf import settings
 
 
 class CustomPagination(PageNumberPagination):
@@ -138,7 +139,7 @@ class TranslateAPIView(APIView):
         permission_classes = [AllowAny]
         def post(self, request):
                 # LLM 모델 인스턴스 생성
-                llm = ChatOpenAI(model="gpt-4o-mini")
+                llm = ChatOpenAI(model="gpt-4o-mini", api_key=settings.API_KEY)
 
                 # 요청에서 번역할 텍스트 가져오기
                 text_to_translate = request.data.get('text', '')
