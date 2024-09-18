@@ -128,7 +128,7 @@ python manage.py runserver
 ## Project Structure
 
 ```
-📦 
+📦 spartanews
 ├─ .gitignore
 ├─ ERD.png
 ├─ README.md
@@ -159,6 +159,7 @@ python manage.py runserver
 │  ├─ urls.py
 │  └─ views.py
 ├─ manage.py
+├─ media
 ├─ requirements.txt
 └─ spartanews
    ├─ __init__.py
