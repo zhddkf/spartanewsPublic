@@ -18,6 +18,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class ArticleSerializer(serializers.ModelSerializer) :
     author = serializers.ReadOnlyField(source='author.username')
+    image = serializers.ImageField(use_url=True)
 
     class Meta :
         model=Article
