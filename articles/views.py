@@ -13,7 +13,11 @@ from .serializers import (
         )
 from .models import Article
 from .serializers import ArticleSerializer, ArticleDetailSerializer
+from langchain_openai import ChatOpenAI
+from langchain_core.messages import HumanMessage, SystemMessage
 from rest_framework.pagination import PageNumberPagination
+from django.conf import settings
+
 
 class CustomPagination(PageNumberPagination):
         page_size = 5
@@ -127,4 +131,27 @@ class CommentLikeAPIView(APIView):
                 else:
                         comment.like_users.add(request.user)
                         data = {"pk": f"{pk} 댓글 추천 완료됨"}
+
                         return Response(data, status=200)
+                
+
+class TranslateAPIView(APIView):
+        permission_classes = [AllowAny]
+        def post(self, request):
+                # LLM 모델 인스턴스 생성
+                llm = ChatOpenAI(model="gpt-4o-mini", api_key=settings.API_KEY)
+
+                # 요청에서 번역할 텍스트 가져오기
+                text_to_translate = request.data.get('text', '')
+
+                # LLM에 들어갈 메시지 설정
+                messages = [
+                SystemMessage(content="Translate the following text from English to Korean."),
+                HumanMessage(content=text_to_translate),
+                ]
+
+                # LLM 호출하여 결과 받기
+                result = llm.invoke(messages)
+
+                # 결과 반환
+                return Response({'번역': result})

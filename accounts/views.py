@@ -101,8 +101,11 @@ class SubscribeView(APIView):  # 구독 기능
             user.subscribes.remove(me)
             return Response("구독취소를 했습니다.", status=status.HTTP_200_OK)
         else:
-            user.subscribes.add(me)
-            return Response("구독했습니다.", status=status.HTTP_200_OK)
+            if username != me.username:
+                user.subscribes.add(me)
+                return Response("구독했습니다.", status=status.HTTP_200_OK)
+            else:
+                return Response("자신의 계정은 구독할 수 없습니다.", status=status.HTTP_200_OK)
         
 
 # password 변경

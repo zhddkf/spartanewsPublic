@@ -109,6 +109,9 @@ REST_FRAMEWORK = {
     ],
 }
 
+# image
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
@@ -145,7 +148,7 @@ EMAIL_HOST_USER = get_secret("EMAIL")
 EMAIL_HOST_PASSWORD = get_secret("EMAIL_PASSWORD")
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-
+API_KEY = get_secret("API_KEY")
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
