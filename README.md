@@ -1,10 +1,19 @@
-# spartanews
+# 프로젝트명 : spartanews
+
+# 프로젝트 소개
 This is the Totoro News project, inspired by the Geek News page.
+
+# 팀 소개
+<details>
+  <summary>열기</summary>
+
+내용
 
 [🍭팀노션 이동](https://www.notion.so/teamsparta/1e2a365b56ad4cf8acd68bff9c3c59c8/)
 &nbsp;
+</details>
 
-## Features
+## 주요기능
 - **Account Management:**
   - User registration
   - Login
@@ -30,6 +39,8 @@ This is the Totoro News project, inspired by the Geek News page.
   - Search articles
 
 &nbsp;
+# 개발기간
+9/12~9/19
 
 ## Requirements
 - annotated-types==0.7.0
