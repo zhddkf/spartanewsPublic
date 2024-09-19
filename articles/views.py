@@ -33,14 +33,6 @@ class ArticleListAPIView(ListAPIView):
         filter_backends = [SearchFilter]
         search_fields = ['author__username', 'title', 'content']
         pagination_class = CustomPagination
-
-        # def get(self, request, *args, **kwargs): # 글 전체 목록
-        #         articles = self.filter_queryset(self.get_queryset())
-        #         serializer = self.get_serializer(articles, many=True)
-                
-        #         if not serializer.data: # 글 검색 기능
-        #                 return Response({"message": "글이 없습니다"}, status=200)
-        #         return Response(serializer.data)
         
         def get_permissions(self):
                 if self.request.method == 'POST': # 로그인 권한 설정
