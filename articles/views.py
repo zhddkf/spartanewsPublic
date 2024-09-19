@@ -69,19 +69,23 @@ class ArticleDetailAPIView(APIView):
         def put(self, request, pk): # 글 수정
                 if request.user.is_authenticated: # 로그인 상태일때
                         article = self.get_object(pk)
-                        article.image.delete() # 이미지 삭제
-                        serializer = ArticleDetailSerializer(
-                        article, data=request.data, partial=True)
-                        if serializer.is_valid(raise_exception=True):
-                                serializer.save()
-                        return Response(serializer.data)
+                        if article.author.username == request.user.username:
+                                article.image.delete() # 이미지 삭제
+                                serializer = ArticleDetailSerializer(
+                                article, data=request.data, partial=True)
+                                if serializer.is_valid(raise_exception=True):
+                                        serializer.save()
+                                return Response(serializer.data)
+                        return Response({'작성자만 수정할 수 있습니다'}, status=403)
                 return Response({'로그인 후 이용 가능합니다'}, status=400)
                 
         def delete(self, request, pk): # 글 삭제
                 if request.user.is_authenticated: # 로그인 상태일때
                         article = self.get_object(pk)
-                        article.delete()
-                        return Response({'글 삭제가 완료되었습니다'},status=204)
+                        if article.author.username == request.user.username:
+                                article.delete()
+                                return Response({'글 삭제가 완료되었습니다'},status=204)
+                        return Response({'작성자만 수정할 수 있습니다'}, status=403)
                 return Response({'로그인 후 이용 가능합니다'}, status=400)
         
         def post(self, request, pk):
