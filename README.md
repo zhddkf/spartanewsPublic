@@ -1,4 +1,4 @@
-# <spartanews>
+# 프로젝트명 : spartanews
 
 # 프로젝트 소개
 This is the Totoro News project, inspired by the Geek News page.
@@ -13,7 +13,7 @@ This is the Totoro News project, inspired by the Geek News page.
 &nbsp;
 </details>
 
-## Features
+## 주요기능
 - **Account Management:**
   - User registration
   - Login
@@ -39,6 +39,8 @@ This is the Totoro News project, inspired by the Geek News page.
   - Search articles
 
 &nbsp;
+# 개발기간
+9/12~9/19
 
 ## Requirements
 - annotated-types==0.7.0
