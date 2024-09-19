@@ -15,7 +15,10 @@ from .models import Article
 from .serializers import ArticleSerializer, ArticleDetailSerializer
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
+from langchain.prompts import PromptTemplate
+from langchain.chains import LLMChain
 from rest_framework.pagination import PageNumberPagination
+from django.conf import settings
 
 
 class CustomPagination(PageNumberPagination):
@@ -139,7 +142,7 @@ class TranslateAPIView(APIView):
         permission_classes = [AllowAny]
         def post(self, request):
                 # LLM 모델 인스턴스 생성
-                llm = ChatOpenAI(model="gpt-4o-mini")
+                llm = ChatOpenAI(model="gpt-4o-mini", api_key=settings.API_KEY)
 
                 # 요청에서 번역할 텍스트 가져오기
                 text_to_translate = request.data.get('text', '')
@@ -155,3 +158,20 @@ class TranslateAPIView(APIView):
 
                 # 결과 반환
                 return Response({'내용': result})
+        
+
+class SummarizeAPIView(APIView):
+        permission_classes = [AllowAny]
+
+        def post(self, request):
+                llm = ChatOpenAI(model="gpt-4o-mini", api_key=settings.API_KEY)
+                template = '{text}의 내용을 다섯 문장 정도의 분량으로 요약해주세요.'
+                prompt = PromptTemplate(template=template, input_variables=['text'])
+                llm_chain = LLMChain(prompt=prompt, llm=llm)
+                text_to_summarize = request.data.get('text', '')
+                
+                if not text_to_summarize:
+                        return Response({'error': 'No text provided to summarize'}, status=400)
+        
+                response = llm_chain.run(text=text_to_summarize)
+                return Response({'요약': response})
