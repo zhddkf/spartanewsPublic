@@ -1,19 +1,14 @@
 # spartanews
 
 # 프로젝트 소개
-<details>
-  <summary>열기</summary>
-  
 This is the Totoro News project, inspired by the Geek News page.
-
-&nbsp;
-</details>
 
 # 팀 소개
 <details>
   <summary>열기</summary>
 
 내용
+
 [🍭팀노션 이동](https://www.notion.so/teamsparta/1e2a365b56ad4cf8acd68bff9c3c59c8/)
 &nbsp;
 </details>
