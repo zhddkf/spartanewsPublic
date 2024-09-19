@@ -55,7 +55,7 @@ class LogoutAPIView(APIView): # 로그아웃
         try:
             token = RefreshToken(refresh)
             token.blacklist()
-            return Response(status=status.HTTP_205_RESET_CONTENT)
+            return Response({'message:로그아웃 되셨습니다'}, status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 

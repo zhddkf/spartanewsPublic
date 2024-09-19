@@ -66,6 +66,7 @@ class ArticleDetailAPIView(APIView):
         def put(self, request, pk): # 글 수정
                 if request.user.is_authenticated: # 로그인 상태일때
                         article = self.get_object(pk)
+                        article.image.delete() # 이미지 삭제
                         serializer = ArticleDetailSerializer(
                         article, data=request.data, partial=True)
                         if serializer.is_valid(raise_exception=True):
@@ -153,4 +154,4 @@ class TranslateAPIView(APIView):
                 result = llm.invoke(messages)
 
                 # 결과 반환
-                return Response({'번역': result})
+                return Response({'내용': result})
