@@ -19,6 +19,7 @@ from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 from rest_framework.pagination import PageNumberPagination
 from django.conf import settings
+from rest_framework.exceptions import NotFound
 
 
 class CustomPagination(PageNumberPagination):
@@ -121,18 +122,17 @@ class CommentAPIView(APIView):
                 data = {"pk": f"{pk} 삭제됨"}
                 return Response(data, status=200)
 
-
 class CommentLikeAPIView(APIView):
         def get_object(self, pk):
                 try:
                         return Comment.objects.get(pk=pk)
                 except Comment.DoesNotExist:
-                        return Response(status=400)
+                        raise NotFound(detail="댓글을 찾을 수 없습니다.", code=404)
         
         def post(self, request, pk):
                 comment = self.get_object(pk)
                 if comment.like_users.filter(pk=request.user.pk).exists():
-                        like = get_object_or_404(LikeComments, comment=pk, user=request.user.pk)
+                        like = get_object_or_404(LikeComments, comment=comment, user=request.user.pk)
                         if like.is_deleted == True:
                                 like.soft_deleted()
                                 data = {"pk": f"{pk} 댓글 추천 취소됨"}
