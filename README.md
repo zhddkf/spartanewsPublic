@@ -1,4 +1,4 @@
-# spartanews
+# <spartanews>
 
 # 프로젝트 소개
 This is the Totoro News project, inspired by the Geek News page.
