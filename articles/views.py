@@ -124,6 +124,7 @@ class CommentLikeAPIView(APIView):
                         return Comment.objects.get(pk=pk)
                 except Comment.DoesNotExist:
                         return Response(status=400)
+        
         def post(self, request, pk):
                 comment = self.get_object(pk)
                 if comment.like_users.filter(pk=request.user.pk).exists():
