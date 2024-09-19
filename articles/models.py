@@ -33,7 +33,7 @@ class Article(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, symmetrical=False, related_name="like_article", through="LikeArticle")
-    image = models.ImageField(upload_to="%Y/%m/%d")
+    image = models.ImageField(upload_to="%Y/%m/%d", blank=True, null=True)
 
 class LikeArticle(SoftDelete):
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
