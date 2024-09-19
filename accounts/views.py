@@ -70,7 +70,7 @@ class DeleteAPIView(APIView): # 회원탈퇴
             user = authenticate(username=request.user.username, password=password)
             if user is not None:
                 user.soft_delete()
-                return Response(status=status.HTTP_204_NO_CONTENT)
+                return Response({"message":"탈퇴 완료하였습니다"},status=status.HTTP_204_NO_CONTENT)
             else:
                 return Response({"error": "Invalid password"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
