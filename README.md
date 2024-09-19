@@ -1,5 +1,7 @@
+# spartanews
 <details>
-<summary># spartanews</summary>
+  <summary>열기</summary>
+  
 This is the Totoro News project, inspired by the Geek News page.
 
 [🍭팀노션 이동](https://www.notion.so/teamsparta/1e2a365b56ad4cf8acd68bff9c3c59c8/)
